@@ -1,42 +1,43 @@
 package ru.yandex.practicum.helper;
 
+import io.qameta.allure.Step;
 import io.restassured.response.Response;
-import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.model.CreateCourierErrorResponse;
+import ru.yandex.practicum.model.CreateCourierResponse;
+import ru.yandex.practicum.model.LoginCourierErrorResponse;
+import ru.yandex.practicum.model.LoginCourierResponse;
 
 import static org.apache.http.HttpStatus.*;
-import static ru.yandex.practicum.client.CourierApiClient.deleteCourierRequest;
-import static ru.yandex.practicum.client.CourierApiClient.loginCourierRequest;
 
 public class CourierHelper {
 
-    public static CreateCourierResponse createCourierDeserialization(Response response) {
+    @Step("Сериализация успешного создания курьера")
+    public static CreateCourierResponse createCourierSerialization(Response response) {
         return response.then().statusCode(SC_CREATED).log().all().and().extract().as(CreateCourierResponse.class);
     }
 
-    public static CreateCourierErrorResponse createDoubleCourierDeserialization(Response response) {
+    @Step("Сериализация ошибки повторного создания курьера")
+    public static CreateCourierErrorResponse createDoubleCourierSerialization(Response response) {
         return response.then().statusCode(SC_CONFLICT).log().all().and().extract().as(CreateCourierErrorResponse.class);
     }
 
-    public static CreateCourierErrorResponse createCourierWithoutAllDataDeserialization(Response response) {
+    @Step("Сериализация ошибки создания курьера без логина или пароля")
+    public static CreateCourierErrorResponse createCourierWithoutAllDataSerialization(Response response) {
         return response.then().statusCode(SC_BAD_REQUEST).log().all().and().extract().as(CreateCourierErrorResponse.class);
     }
 
-    public static LoginCourierResponse loginCourierResponseDeserialization(Response response) {
+    @Step("Сериализация успешного логина курьера")
+    public static LoginCourierResponse loginCourierResponseSerialization(Response response) {
         return response.then().statusCode(SC_OK).log().all().and().extract().as(LoginCourierResponse.class);
     }
 
-    public static LoginCourierErrorResponse loginCourierWithoutAllDataDeserialization(Response response) {
+    @Step("Сериализация логина курьера без логина или пароля")
+    public static LoginCourierErrorResponse loginCourierWithoutAllDataSerialization(Response response) {
         return response.then().statusCode(SC_BAD_REQUEST).log().all().and().extract().as(LoginCourierErrorResponse.class);
     }
 
-    public static LoginCourierErrorResponse loginCourierWithWrongPasswordDeserialization(Response response) {
+    @Step("Сериализация логина курьера с неверным")
+    public static LoginCourierErrorResponse loginCourierWithWrongPasswordSerialization(Response response) {
         return response.then().statusCode(SC_NOT_FOUND).log().all().and().extract().as(LoginCourierErrorResponse.class);
     }
-
-    public static void deleteCourier(CreateCourierRequest data) {
-        Response response = loginCourierRequest(new LoginCourierRequest(data.getLogin(), data.getPassword()));
-        Integer id = loginCourierResponseDeserialization(response).getId();
-        deleteCourierRequest(id).then().statusCode(SC_OK);
-    }
-
 }
