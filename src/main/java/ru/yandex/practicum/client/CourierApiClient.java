@@ -37,6 +37,6 @@ public class CourierApiClient extends BaseApiClient {
                 .pathParam("id", id)
                 .when()
                 .filter(new AllureRestAssured())
-                .delete(ACCEPT_ORDER_URL + "/{id}");
+                .delete(DELETE_COURIER_URL + "/{id}");
     }
 }
