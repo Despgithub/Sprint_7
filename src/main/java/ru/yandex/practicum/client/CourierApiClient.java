@@ -26,6 +26,7 @@ public class CourierApiClient extends BaseApiClient {
                 .spec(getSpec())
                 .body(loginCourierRequest)
                 .when()
+                .filter(new AllureRestAssured())
                 .post(LOGIN_COURIER_URL);
     }
 
@@ -35,6 +36,7 @@ public class CourierApiClient extends BaseApiClient {
                 .spec(getSpec())
                 .pathParam("id", id)
                 .when()
+                .filter(new AllureRestAssured())
                 .delete(ACCEPT_ORDER_URL + "/{id}");
     }
 }

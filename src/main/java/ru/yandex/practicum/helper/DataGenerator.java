@@ -32,4 +32,12 @@ public class DataGenerator {
         return new CreateCourierRequest(login, password, firstName);
     }
 
+    public static CreateCourierRequest getCourierWithoutName() {
+        Faker faker = new Faker(new Locale("ru"));
+        String login = faker.name().username();
+        String password = faker.internet().password();
+        String firstName = "";
+        return new CreateCourierRequest(login, password, firstName);
+    }
+
 }

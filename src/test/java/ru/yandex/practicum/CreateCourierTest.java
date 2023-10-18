@@ -15,49 +15,54 @@ import static ru.yandex.practicum.helper.DataGenerator.*;
 
 
 public class CreateCourierTest {
-    CreateCourierRequest data;
     Response response;
 
     @DisplayName("Создание курьера")
     @Description("Должен вернуться код '201', а в теле сообщения 'ok:true'")
     @Test
     public void createCourierTest() {
-        data = getRandomCourier();
-        response = createCourierRequest(data);
-        CreateCourierResponse createResponse = createCourier(response);
-        Assert.assertEquals("Неверный ответ запроса", createResponse.getOk(), true);
+        response = createCourierRequest(getRandomCourier());
+        CreateCourierResponse courierResponse = createCourier(response);
+        Assert.assertEquals("Неверный ответ запроса", courierResponse.getOk(), true);
     }
 
     @DisplayName("Создание курьеров с одинаковыми данными")
     @Description("Должен вернуться код '409', и ошибка 'Этот логин уже используется. Попробуйте другой.'")
     @Test
     public void createCourierDoubleCourierTest() {
-        data = getRandomCourier();
+        CreateCourierRequest data = getRandomCourier();
         response = createCourierRequest(data);
         createCourier(response);
         Response responseDouble = createCourierRequest(data);
-        CreateCourierErrorResponse errorResponse = createDoubleCourier(responseDouble);
-        Assert.assertEquals("Неверная ошибка запроса", errorResponse.getMessage(), "Этот логин уже используется. Попробуйте другой.");
+        CreateCourierErrorResponse createCourierErrorResponse = createDoubleCourier(responseDouble);
+        Assert.assertEquals("Неверная ошибка запроса", createCourierErrorResponse.getMessage(), "Этот логин уже используется. Попробуйте другой.");
     }
 
     @DisplayName("Создание курьера без логина")
     @Description("Должен вернуться код '400', и ошибка 'Недостаточно данных для создания учетной записи'")
     @Test()
     public void createCourierWithoutLoginTest() {
-        data = getCourierWithoutLogin();
-        response = createCourierRequest(data);
-        CreateCourierErrorResponse errorResponse = createCourierWithoutAllData(response);
-        Assert.assertEquals("Неверная ошибка запроса", errorResponse.getMessage(), "Недостаточно данных для создания учетной записи");
+        response = createCourierRequest(getCourierWithoutLogin());
+        CreateCourierErrorResponse createCourierErrorResponse = createCourierWithoutAllData(response);
+        Assert.assertEquals("Неверная ошибка запроса", createCourierErrorResponse.getMessage(), "Недостаточно данных для создания учетной записи");
     }
 
     @DisplayName("Создание курьера без пароля")
     @Description("Должен вернуться код '400', и ошибка 'Недостаточно данных для создания учетной записи'")
     @Test
     public void createCourierWithoutPasswordTest() {
-        data = getCourierWithoutPassword();
-        response = createCourierRequest(data);
-        CreateCourierErrorResponse errorResponse = createCourierWithoutAllData(response);
-        Assert.assertEquals("Неверная ошибка запроса", errorResponse.getMessage(), "Недостаточно данных для создания учетной записи");
+        response = createCourierRequest(getCourierWithoutPassword());
+        CreateCourierErrorResponse createCourierErrorResponse = createCourierWithoutAllData(response);
+        Assert.assertEquals("Неверная ошибка запроса", createCourierErrorResponse.getMessage(), "Недостаточно данных для создания учетной записи");
+    }
+
+    @DisplayName("Создание курьера без имени")
+    @Description("Должен вернуться код '201', а в теле сообщения 'ok:true'")
+    @Test
+    public void createCourierWithoutNameTest() {
+        response = createCourierRequest(getCourierWithoutName());
+        CreateCourierResponse courierResponse = createCourier(response);
+        Assert.assertEquals("Неверный ответ запроса", courierResponse.getOk(), true);
     }
 
 }
