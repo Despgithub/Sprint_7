@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Locale;
 
 import static ru.yandex.practicum.client.OrderApiClient.createOrder;
-import static ru.yandex.practicum.helper.OrderHelper.createOrderSerialization;
+import static ru.yandex.practicum.helper.OrderHelper.createOrderDeserialization;
 
 @RunWith(Parameterized.class)
 public class CreateOrderTest {
 
-    private final CreateOrderRequest request;
+    CreateOrderRequest request;
 
     public CreateOrderTest(CreateOrderRequest request) {
         this.request = request;
@@ -41,7 +41,7 @@ public class CreateOrderTest {
     @Description("Должен вернуться код '201', и вернуться track")
     @Test
     public void createOrderTest() {
-        CreateOrderResponse response = createOrderSerialization(createOrder(request));
+        CreateOrderResponse response = createOrderDeserialization(createOrder(request));
         Assert.assertNotNull("Ответ не содержит track", response.getTrack());
     }
 }
