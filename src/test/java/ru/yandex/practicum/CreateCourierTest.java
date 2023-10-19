@@ -3,13 +3,16 @@ package ru.yandex.practicum;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.yandex.practicum.model.CreateCourierErrorResponse;
 import ru.yandex.practicum.model.CreateCourierRequest;
 import ru.yandex.practicum.model.CreateCourierResponse;
+import ru.yandex.practicum.model.LoginCourierRequest;
 
 import static ru.yandex.practicum.client.CourierApiClient.createCourierRequest;
+import static ru.yandex.practicum.client.CourierApiClient.loginCourierRequest;
 import static ru.yandex.practicum.helper.CourierHelper.*;
 import static ru.yandex.practicum.helper.DataGenerator.*;
 
@@ -17,6 +20,8 @@ import static ru.yandex.practicum.helper.DataGenerator.*;
 public class CreateCourierTest {
     CreateCourierRequest data;
     Response response;
+
+    Integer id;
 
     @DisplayName("Создание курьера")
     @Description("Должен вернуться код '201', а в теле сообщения 'ok:true'")
@@ -26,7 +31,8 @@ public class CreateCourierTest {
         response = createCourierRequest(data);
         CreateCourierResponse createCourierResponse = createCourierDeserialization(response);
         Assert.assertEquals("Неверный ответ запроса", createCourierResponse.getOk(), true);
-        deleteCourier(data);
+        Response responseID = loginCourierRequest(new LoginCourierRequest(data.getLogin(), data.getPassword()));
+        id = loginCourierResponseDeserialization(responseID).getId();
     }
 
     @DisplayName("Создание курьеров с одинаковыми данными")
@@ -39,7 +45,8 @@ public class CreateCourierTest {
         Response responseDouble = createCourierRequest(data);
         CreateCourierErrorResponse courierErrorResponse = createDoubleCourierDeserialization(responseDouble);
         Assert.assertEquals("Неверная ошибка запроса", courierErrorResponse.getMessage(), "Этот логин уже используется. Попробуйте другой.");
-        deleteCourier(data);
+        Response responseID = loginCourierRequest(new LoginCourierRequest(data.getLogin(), data.getPassword()));
+        id = loginCourierResponseDeserialization(responseID).getId();
     }
 
 
@@ -71,7 +78,15 @@ public class CreateCourierTest {
         response = createCourierRequest(data);
         CreateCourierResponse createCourierResponse = createCourierDeserialization(response);
         Assert.assertEquals("Неверный ответ запроса", createCourierResponse.getOk(), true);
-        deleteCourier(data);
+        Response responseID = loginCourierRequest(new LoginCourierRequest(data.getLogin(), data.getPassword()));
+        id = loginCourierResponseDeserialization(responseID).getId();
+    }
+
+    @After
+    public void tearDown() {
+        if (id != null) {
+            deleteCourier(id);
+        }
     }
 
 }

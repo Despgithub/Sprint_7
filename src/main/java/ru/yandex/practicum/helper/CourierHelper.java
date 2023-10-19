@@ -1,11 +1,13 @@
 package ru.yandex.practicum.helper;
 
 import io.restassured.response.Response;
-import ru.yandex.practicum.model.*;
+import ru.yandex.practicum.model.CreateCourierErrorResponse;
+import ru.yandex.practicum.model.CreateCourierResponse;
+import ru.yandex.practicum.model.LoginCourierErrorResponse;
+import ru.yandex.practicum.model.LoginCourierResponse;
 
 import static org.apache.http.HttpStatus.*;
 import static ru.yandex.practicum.client.CourierApiClient.deleteCourierRequest;
-import static ru.yandex.practicum.client.CourierApiClient.loginCourierRequest;
 
 public class CourierHelper {
 
@@ -33,9 +35,7 @@ public class CourierHelper {
         return response.then().statusCode(SC_NOT_FOUND).log().all().and().extract().as(LoginCourierErrorResponse.class);
     }
 
-    public static void deleteCourier(CreateCourierRequest data) {
-        Response response = loginCourierRequest(new LoginCourierRequest(data.getLogin(), data.getPassword()));
-        Integer id = loginCourierResponseDeserialization(response).getId();
+    public static void deleteCourier(Integer id) {
         deleteCourierRequest(id).then().statusCode(SC_OK);
     }
 

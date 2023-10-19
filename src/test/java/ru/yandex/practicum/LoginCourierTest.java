@@ -3,6 +3,7 @@ package ru.yandex.practicum;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import ru.yandex.practicum.model.CreateCourierRequest;
@@ -20,6 +21,8 @@ public class LoginCourierTest {
     CreateCourierRequest data;
     Response response;
 
+    Integer id;
+
     @DisplayName("Логин курьера")
     @Description("Должен вернуться код '200', и вернуться id")
     @Test
@@ -28,8 +31,8 @@ public class LoginCourierTest {
         createCourierRequest(data);
         response = loginCourierRequest(new LoginCourierRequest(data.getLogin(), data.getPassword()));
         LoginCourierResponse loginCourierResponse = loginCourierResponseDeserialization(response);
-        Assert.assertNotNull("Ответ не содержит id", loginCourierResponse.getId());
-        deleteCourier(data);
+        id = loginCourierResponse.getId();
+        Assert.assertNotNull("Ответ не содержит id", id);
     }
 
     @DisplayName("Логин курьера без логина")
@@ -76,6 +79,13 @@ public class LoginCourierTest {
         response = loginCourierRequest(new LoginCourierRequest(data.getLogin(), "0шИ6ка!"));
         LoginCourierErrorResponse loginCourierErrorResponse = loginCourierWithWrongPasswordDeserialization(response);
         Assert.assertEquals("Неверная ошибка запроса", loginCourierErrorResponse.getMessage(), "Учетная запись не найдена");
+    }
+
+    @After
+    public void tearDown() {
+        if (id != null) {
+            deleteCourier(id);
+        }
     }
 
 }
